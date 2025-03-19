@@ -2,106 +2,97 @@ import sqlite3
 import os
 
 # Caminho absoluto para o banco de dados
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Diretório do arquivo atual
-DB_DIR = os.path.join(BASE_DIR, '..', 'databases')  # Caminho da pasta databases
-DB_PATH = os.path.join(DB_DIR, 'dados_cliente.db')  # Caminho do arquivo do banco de dados
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_DIR = os.path.join(BASE_DIR, '..', 'databases')
+DB_PATH = os.path.join(DB_DIR, 'dados_cliente.db')
 
 # Garantir que a pasta databases exista
-if not os.path.exists(DB_DIR):
-    os.makedirs(DB_DIR)
+os.makedirs(DB_DIR, exist_ok=True)
+
+def conectar_bd():
+    """Estabelece conexão com o banco de dados."""
+    return sqlite3.connect(DB_PATH)
 
 def criar_tabela():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS usuarios (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome TEXT NOT NULL,
-        endereco TEXT NOT NULL,
-        email TEXT NOT NULL,
-        telefone TEXT NOT NULL
-    )''')
-    conn.commit()
-    conn.close()
+    """Cria a tabela de usuários se não existir."""
+    with conectar_bd() as conn:
+        conn.execute('''
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            endereco TEXT NOT NULL,
+            email TEXT NOT NULL,
+            telefone TEXT NOT NULL
+        )''')
+
+def usuario_existe(nome, endereco, email, telefone):
+    """Verifica se um usuário já existe no banco de dados."""
+    with conectar_bd() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            '''SELECT id FROM usuarios WHERE nome = ? AND endereco = ? AND email = ? AND telefone = ?''',
+            (nome, endereco, email, telefone)
+        )
+        usuario = cursor.fetchone()
+        return usuario is not None
 
 def cadastrar_usuario(nome, endereco, email, telefone):
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('INSERT INTO usuarios (nome, endereco, email, telefone) '
-    'VALUES (?, ?, ?, ?)', (nome, endereco, email, telefone))
-    conn.commit()
+    """Cadastra um novo usuário e retorna seus dados."""
+    if usuario_existe(nome, endereco, email, telefone):
+        return None  # Indica que o usuário já existe
 
-    # Pegando o id do último usuário inserido
-    id = cursor.lastrowid  # Agora o id está corretamente definido
+    with conectar_bd() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            'INSERT INTO usuarios (nome, endereco, email, telefone) VALUES (?, ?, ?, ?)',
+            (nome, endereco, email, telefone)
+        )
+        conn.commit()
+        return buscar_usuario(cursor.lastrowid)
 
-    # Buscando o usuário recém-inserido
-    cursor.execute('SELECT * FROM usuarios WHERE id = ?', (id,))
-    usuario = cursor.fetchone()
-    conn.close()
+def editar_usuario(id, nome, endereco, email, telefone):
+    """Edita os dados de um usuário existente e retorna os dados atualizados."""
+    with conectar_bd() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            'UPDATE usuarios SET nome = ?, endereco = ?, email = ?, telefone = ? WHERE id = ?',
+            (nome, endereco, email, telefone, id)
+        )
+        conn.commit()
+        return buscar_usuario(id)
 
-    # Se o usuário foi encontrado, retornamos seus dados na ordem correta
-    if usuario:
-        usuario_dict = {
+def buscar_usuario(id):
+    """Busca um usuário pelo ID e retorna seus dados."""
+    with conectar_bd() as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM usuarios WHERE id = ?', (id,))
+        usuario = cursor.fetchone()
+        
+        return ({
             'id': usuario[0],
             'nome': usuario[1],
             'endereco': usuario[2],
             'email': usuario[3],
             'telefone': usuario[4]
-        }
-        return usuario_dict
-    return None  # Caso o usuário não seja encontrado
+        } if usuario else None)
 
-def editar_usuario(nome, endereco, email, telefone, id):
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
+def deletar_usuario(id):
+    """Deleta um usuário pelo ID."""
+    with conectar_bd() as conn:
+        conn.execute('DELETE FROM usuarios WHERE id = ?', (id,))
+        conn.commit()
 
-    # Atualizando os dados do usuário
-    cursor.execute('UPDATE usuarios SET nome = ?, endereco = ?, email = ?, telefone = ? WHERE id = ?', 
-                   (nome, endereco, email, telefone, id))
-    conn.commit()
-
-    # Buscando o usuário atualizado após a atualização no banco
-    cursor.execute('SELECT * FROM usuarios WHERE id = ?', (id,))
-    usuario_atualizado = cursor.fetchone()
-
-    conn.close()
-
-    # Se o usuário foi encontrado, retorna como um dicionário
-    if usuario_atualizado:
-        return {
-            'id': usuario_atualizado[0],
-            'nome': usuario_atualizado[1],
-            'endereco': usuario_atualizado[2],
-            'email': usuario_atualizado[3],
-            'telefone': usuario_atualizado[4]
-        }
-    
-    return None  # Caso o usuário não seja encontrado
-
-def buscar_usuario(id):
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM usuarios WHERE id = ?', (id,))
-    usuario = cursor.fetchone()
-    conn.close()
-    # Se o usuário não for encontrado, retorna None
-    if usuario:
-        # Convertendo a tupla para um dicionário
-        usuario_dict = {
-            'id': usuario[0],  # Supondo que 'id' seja a primeira coluna
-            'nome': usuario[1],  # 'nome' sendo a segunda coluna, ajuste conforme seu banco
-            'endereco': usuario[2],  # 'endereco'
-            'email': usuario[3],  # 'email'
-            'telefone': usuario[4],  # 'telefone'
-        }
-        print(usuario_dict)
-        return usuario_dict
-    
-    return None  # Retorna None se o usuário não for encontrado
-
-def deletar_usuario(id,):
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM usuarios WHERE id = ?', (id,))
-    conn.commit()
-    conn.close()
+def buscar_todos_usuarios():
+    """Busca todos os usuários e retorna seus dados."""
+    with conectar_bd() as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM usuarios')
+        usuarios = cursor.fetchall()
+        
+        return [{
+            'id': usuario[0],
+            'nome': usuario[1],
+            'endereco': usuario[2],
+            'email': usuario[3],
+            'telefone': usuario[4]
+        } for usuario in usuarios]
