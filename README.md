@@ -1,6 +1,6 @@
-# Servidor Backend - API Flask com SQLite
+# Servidor Backend - API em Python, Flask e SQLite
 
-Este projeto contém uma **API REST** desenvolvida com **Flask** e **SQLite** para gerenciar usuários. A API permite realizar operações básicas como **cadastrar, consultar, editar e excluir usuários**.
+Este projeto contém uma **API REST** desenvolvida com **Python** e **Flask** para gerenciar Cadastro de usuários através do **SQLite**. A API permite realizar operações básicas como **cadastrar, consultar, editar e excluir usuários**.
 
 ---
 
