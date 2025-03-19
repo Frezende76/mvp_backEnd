@@ -80,7 +80,7 @@ python app.py
 O servidor estará rodando em:  
 [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
-### OBS: Ao iniciar o servidor será criado automaticamente o banco de dados dados_cliente.db 
+### OBS: Ao iniciar o servidor será criado automaticamente o banco de dados dados_cliente.db dentro da pasta databases.
 
 ---
 
