@@ -1,15 +1,15 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from routes.usuario_rotas import usuario_rotas
+from models.usuario import criar_tabela
 
-# Configuração da aplicação Flask
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/dados_cliente.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
-# Rodando a aplicação
-if __name__ == "__main__":
-    db.create_all() # Cria as tabelas no banco de dados
+# Criar a tabela de usuários no banco
+criar_tabela()
+
+# Registrar as rotas
+app.register_blueprint(usuario_rotas)
+
+if __name__ == '__main__':
     app.run(debug=True)
-
 
