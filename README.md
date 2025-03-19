@@ -74,7 +74,7 @@ pip freeze > requirements.txt
 ## 📌 5. Iniciando o Servidor
 
 ```bash
-flask run
+python app.py
 ```
 
 O servidor estará rodando em:  
@@ -89,8 +89,8 @@ O servidor estará rodando em:
 | POST   | `/usuarios/`        | Cadastrar um novo usuário      |
 | GET    | `/usuarios/`        | Listar todos os usuários       |
 | GET    | `/usuarios/<id>`    | Consultar um usuário por ID    |
-| PUT    | `/usuarios/<id>`    | Editar um usuário              |
-| DELETE | `/usuarios/<id>`    | Excluir um usuário             |
+| PUT    | `/usuarios/<id>`    | Editar um usuário por ID       |
+| DELETE | `/usuarios/<id>`    | Excluir um usuário por ID      |
 
 ---
 
