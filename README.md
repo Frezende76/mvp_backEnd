@@ -80,7 +80,7 @@ python app.py
 O servidor estará rodando em:  
 [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
-### OBS: Ao iniciar o servidor será criado automaticamente o banco de dados dados_cliente.db 
+### OBS: Ao iniciar o servidor será criado automaticamente o banco de dados dados_cliente.db dentro da pasta databases.
 
 ---
 
@@ -159,6 +159,6 @@ Se você adicionou **Flask-Swagger-UI**, acesse:
 
 ---
 
-## 📌 11. Licença
+## 📌 11. Contato
 
-Este projeto está sob a licença **MIT**. Sinta-se livre para usá-lo e modificá-lo conforme necessário.
+Desenvolvido por **Fabricio Rezende**. Para dúvidas ou sugestões, entre em contato.
