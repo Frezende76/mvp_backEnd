@@ -87,10 +87,10 @@ O servidor estará rodando em:
 | Método | Endpoint            | Descrição                      |
 |--------|---------------------|--------------------------------|
 | POST   | `/usuarios/`        | Cadastrar um novo usuário      |
-| GET    | `/usuarios/`        | Listar todos os usuários       |
-| GET    | `/usuarios/<id>`    | Consultar um usuário por ID    |
 | PUT    | `/usuarios/<id>`    | Editar um usuário por ID       |
+| GET    | `/usuarios/<id>`    | Consultar um usuário por ID    |
 | DELETE | `/usuarios/<id>`    | Excluir um usuário por ID      |
+| GET    | `/usuarios/`        | Listar todos os usuários       |
 
 ---
 
