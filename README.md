@@ -142,7 +142,6 @@ Se você adicionou **Flask-Swagger-UI**, acesse:
 │  │── requirements.txt
 
 ```
-
 ---
 
 ## 📌 10. Erros Comuns e Soluções
