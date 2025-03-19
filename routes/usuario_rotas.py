@@ -1,6 +1,11 @@
-from flask import Blueprint, request, jsonify
+import json
+from flask import Blueprint, request, jsonify, Response
 from models.usuario import cadastrar_usuario, editar_usuario, buscar_usuario, deletar_usuario, buscar_todos_usuarios
 from schemas.usuario_schema import UsuarioSchema
+
+# Função auxiliar para gerar respostas JSON
+def gerar_resposta_json(data, status_code=200):
+    return Response(json.dumps(data, ensure_ascii=False), mimetype='application/json', status=status_code)
 
 # Criação de um Blueprint para as rotas de usuário
 usuario_rotas = Blueprint('usuarios', __name__)
@@ -42,9 +47,9 @@ def editar_usuario_bd(id):
     if usuario:
         usuario_schema = UsuarioSchema()
         usuario_dict = usuario_schema.dump(usuario)
-        return jsonify(usuario_dict)
+        return gerar_resposta_json(usuario_dict), 200
     
-    return jsonify({'message': 'Usuário não encontrado'}), 404
+    return gerar_resposta_json({'message': 'Nenhum usuário encontrado'}, 404)
 
 # Rota para buscar um usuário pelo ID (Método GET)
 @usuario_rotas.route('/usuarios/<int:id>', methods=['GET'])
@@ -53,9 +58,9 @@ def buscar_usuario_bd(id):
     if usuario:
         usuario_schema = UsuarioSchema()
         usuario_dict = usuario_schema.dump(usuario)
-        return jsonify(usuario_dict)
+        return gerar_resposta_json(usuario_dict), 200
     
-    return jsonify({'message': 'Usuário não encontrado'}), 404
+    return gerar_resposta_json({'message': 'Nenhum usuário encontrado'}, 404)
 
 # Rota para deletar um usuário (Método DELETE)
 @usuario_rotas.route('/usuarios/<int:id>', methods=['DELETE'])
@@ -75,6 +80,6 @@ def buscar_todos_usuarios_bd():
     if usuarios:
         usuario_schema = UsuarioSchema(many=True)  # many=True para lidar com múltiplos usuários
         usuarios_dict = usuario_schema.dump(usuarios)
-        return jsonify(usuarios_dict)
+        return gerar_resposta_json(usuarios_dict), 200
     
-    return jsonify({'message': 'Nenhum usuário encontrado'}), 404
+    return gerar_resposta_json({'message': 'Nenhum usuário encontrado'}, 404)
