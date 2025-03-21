@@ -11,7 +11,7 @@ def gerar_resposta_json(data, status_code=200):
 usuario_rotas = Blueprint('usuarios', __name__)
 
 # Rota para cadastrar um usuário (Método POST)
-@usuario_rotas.route('/usuarios', methods=['POST'])
+@usuario_rotas.route('/usuarios/cadastrar', methods=['POST'])
 def cadastrar_usuario_bd():
     dados = request.json  # Alterado para JSON
     nome = dados.get('nome')
@@ -31,7 +31,7 @@ def cadastrar_usuario_bd():
     return jsonify({'message': 'Usuário cadastrado com sucesso!'}), 201
 
 # Rota para editar um usuário existente (Método PUT)
-@usuario_rotas.route('/usuarios/<int:id>', methods=['PUT'])
+@usuario_rotas.route('/usuarios/editar/<int:id>', methods=['PUT'])
 def editar_usuario_bd(id):
     dados = request.json  # Alterado para JSON
     nome = dados.get('nome')
@@ -52,7 +52,7 @@ def editar_usuario_bd(id):
     return gerar_resposta_json({'message': 'Nenhum usuário encontrado'}, 404)
 
 # Rota para buscar um usuário pelo ID (Método GET)
-@usuario_rotas.route('/usuarios/<int:id>', methods=['GET'])
+@usuario_rotas.route('/usuarios/buscar/<int:id>', methods=['GET'])
 def buscar_usuario_bd(id):
     usuario = buscar_usuario(id)
     if usuario:
@@ -63,7 +63,7 @@ def buscar_usuario_bd(id):
     return gerar_resposta_json({'message': 'Nenhum usuário encontrado'}, 404)
 
 # Rota para deletar um usuário (Método DELETE)
-@usuario_rotas.route('/usuarios/<int:id>', methods=['DELETE'])
+@usuario_rotas.route('/usuarios/deletar/<int:id>', methods=['DELETE'])
 def deletar_usuario_bd(id):
     usuario = buscar_usuario(id)
 
