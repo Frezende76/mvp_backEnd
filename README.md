@@ -93,6 +93,7 @@ O servidor estará rodando em:
 | GET    | `/usuarios/consultar/<id>` | Consultar um usuário por ID    |
 | DELETE | `/usuarios/deletar/<id>`   | Excluir um usuário por ID      |
 | GET    | `/usuarios/todos`          | Listar todos os usuários       |
+| POST   | `/usuarios/verificar`      | Verificar usuários existentes  |
 
 ---
 
