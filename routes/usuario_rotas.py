@@ -1,7 +1,7 @@
-import json
 from flask import Blueprint, request, jsonify, Response
 from models.usuario import cadastrar_usuario, editar_usuario, buscar_usuario, deletar_usuario, buscar_todos_usuarios
 from schemas.usuario_schema import UsuarioSchema
+import json
 
 # Função auxiliar para gerar respostas JSON
 def gerar_resposta_json(data, status_code=200):
@@ -33,7 +33,14 @@ def cadastrar_usuario_bd():
 # Rota para editar um usuário existente (Método PUT)
 @usuario_rotas.route('/usuarios/editar/<int:id>', methods=['PUT'])
 def editar_usuario_bd(id):
-    dados = request.json  # Alterado para JSON
+    dados = request.get_json(silent=True)
+    
+    if isinstance(dados, list):  # Se for uma lista, pega o primeiro elemento
+        dados = dados[0]
+    
+    if not isinstance(dados, dict):  # Garante que seja um dicionário
+        return jsonify({'message': 'Dados inválidos!'}), 400
+    
     nome = dados.get('nome')
     endereco = dados.get('endereco')
     email = dados.get('email')
@@ -74,12 +81,34 @@ def deletar_usuario_bd(id):
     return jsonify({'message': 'Usuário não encontrado'}), 404
 
 # Rota para buscar todos os usuários (Método GET)
-@usuario_rotas.route('/usuarios', methods=['GET'])
+@usuario_rotas.route('/usuarios/todos', methods=['GET'])
 def buscar_todos_usuarios_bd():
-    usuarios = buscar_todos_usuarios()
+    nome = request.args.get('nome', '')
+    endereco = request.args.get('endereco', '')
+    email = request.args.get('email', '')
+    telefone = request.args.get('telefone', '')
+
+    # Lógica de busca com filtros
+    usuarios = buscar_todos_usuarios(nome, endereco, email, telefone)
     if usuarios:
         usuario_schema = UsuarioSchema(many=True)  # many=True para lidar com múltiplos usuários
         usuarios_dict = usuario_schema.dump(usuarios)
         return gerar_resposta_json(usuarios_dict), 200
     
     return gerar_resposta_json({'message': 'Nenhum usuário encontrado'}, 404)
+
+# Nova rota para verificar se um usuário existe (Método POST)
+@usuario_rotas.route('/usuarios/verificar', methods=['POST'])
+def verificar_usuario_bd():
+    dados = request.json
+    nome = dados.get('nome', '')
+    endereco = dados.get('endereco', '')
+    email = dados.get('email', '')
+    telefone = dados.get('telefone', '')
+    
+     # Verificar se o usuário já existe no banco de dados com os mesmos dados
+    usuarios = buscar_todos_usuarios(nome, endereco, email, telefone)
+    if usuarios:
+        return gerar_resposta_json({'message': 'Usuário já cadastrado'}), 400  # Se já existir, retorna erro 400
+    
+    return gerar_resposta_json({'message': 'Nenhum usuário encontrado'}, 200)  # Se não existir, retorna 200

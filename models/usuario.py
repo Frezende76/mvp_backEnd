@@ -82,11 +82,30 @@ def deletar_usuario(id):
         conn.execute('DELETE FROM usuarios WHERE id = ?', (id,))
         conn.commit()
 
-def buscar_todos_usuarios():
-    """Busca todos os usuários e retorna seus dados."""
+def buscar_todos_usuarios(nome='', endereco='', email='', telefone=''):
+    """Busca todos os usuários e retorna seus dados, com filtros opcionais."""
+    query = 'SELECT * FROM usuarios WHERE 1=1'
+    params = []
+    
+    if nome:
+        query += ' AND nome LIKE ?'
+        params.append(f'%{nome}%')
+    
+    if endereco:
+        query += ' AND endereco LIKE ?'
+        params.append(f'%{endereco}%')
+    
+    if email:
+        query += ' AND email LIKE ?'
+        params.append(f'%{email}%')
+    
+    if telefone:
+        query += ' AND telefone LIKE ?'
+        params.append(f'%{telefone}%')
+    
     with conectar_bd() as conn:
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM usuarios')
+        cursor.execute(query, params)
         usuarios = cursor.fetchall()
         
         return [{
