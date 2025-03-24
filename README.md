@@ -86,13 +86,13 @@ O servidor estará rodando em:
 
 ## 📌 6. Endpoints da API
 
-| Método | Endpoint            | Descrição                      |
-|--------|---------------------|--------------------------------|
-| POST   | `/usuarios/`        | Cadastrar um novo usuário      |
-| PUT    | `/usuarios/<id>`    | Editar um usuário por ID       |
-| GET    | `/usuarios/<id>`    | Consultar um usuário por ID    |
-| DELETE | `/usuarios/<id>`    | Excluir um usuário por ID      |
-| GET    | `/usuarios/`        | Listar todos os usuários       |
+| Método | Endpoint                   | Descrição                      |
+|--------|----------------------------|--------------------------------|
+| POST   | `/usuarios/cadastrar`      | Cadastrar um novo usuário      |
+| PUT    | `/usuarios/editar/<id>`    | Editar um usuário por ID       |
+| GET    | `/usuarios/consultar/<id>` | Consultar um usuário por ID    |
+| DELETE | `/usuarios/deletar/<id>`   | Excluir um usuário por ID      |
+| GET    | `/usuarios/todos`          | Listar todos os usuários       |
 
 ---
 
