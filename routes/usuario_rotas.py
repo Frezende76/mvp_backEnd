@@ -105,10 +105,12 @@ def verificar_usuario_bd():
     endereco = dados.get('endereco', '')
     email = dados.get('email', '')
     telefone = dados.get('telefone', '')
-    
-     # Verificar se o usuário já existe no banco de dados com os mesmos dados
+ 
+    # Verificar se o usuário já existe no banco de dados com os mesmos dados
     usuarios = buscar_todos_usuarios(nome, endereco, email, telefone)
-    if usuarios:
-        return gerar_resposta_json({'message': 'Usuário já cadastrado'}), 400  # Se já existir, retorna erro 400
     
-    return gerar_resposta_json({'message': 'Nenhum usuário encontrado'}, 200)  # Se não existir, retorna 200
+      # Log para mostrar os usuários encontrados
+    if usuarios:
+        return gerar_resposta_json({'usuarioExistente': True, 'message': 'Usuário já cadastrado'}), 400
+    
+    return gerar_resposta_json({'usuarioExistente': False, 'message': 'Nenhum usuário encontrado'}, 200)
