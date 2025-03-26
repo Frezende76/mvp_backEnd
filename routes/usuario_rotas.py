@@ -83,18 +83,29 @@ def deletar_usuario_bd(id):
 # Rota para buscar todos os usuários (Método GET)
 @usuario_rotas.route('/usuarios/todos', methods=['GET'])
 def buscar_todos_usuarios_bd():
-    nome = request.args.get('nome', '')
-    endereco = request.args.get('endereco', '')
-    email = request.args.get('email', '')
-    telefone = request.args.get('telefone', '')
+    filtros = {}
 
-    # Lógica de busca com filtros
-    usuarios = buscar_todos_usuarios(nome, endereco, email, telefone)
+    nome = request.args.get('nome')
+    if nome:
+        filtros['nome'] = nome.strip()
+
+    endereco = request.args.get('endereco')
+    if endereco:
+        filtros['endereco'] = endereco.strip()
+
+    email = request.args.get('email')
+    if email:
+        filtros['email'] = email.strip()
+
+    telefone = request.args.get('telefone')
+    if telefone:
+        filtros['telefone'] = telefone.strip()
+
+    usuarios = buscar_todos_usuarios(**filtros)  # Passa apenas os filtros não vazios
     if usuarios:
-        usuario_schema = UsuarioSchema(many=True)  # many=True para lidar com múltiplos usuários
-        usuarios_dict = usuario_schema.dump(usuarios)
-        return gerar_resposta_json(usuarios_dict), 200
-    
+        usuario_schema = UsuarioSchema(many=True)
+        return gerar_resposta_json(usuario_schema.dump(usuarios)), 200
+
     return gerar_resposta_json({'message': 'Nenhum usuário encontrado'}, 404)
 
 # Nova rota para verificar se um usuário existe (Método POST)
@@ -108,7 +119,7 @@ def verificar_usuario_bd():
  
     # Verificar se o usuário já existe no banco de dados com os mesmos dados
     usuarios = buscar_todos_usuarios(nome, endereco, email, telefone)
-    
+
       # Log para mostrar os usuários encontrados
     if usuarios:
         return gerar_resposta_json({'usuarioExistente': True, 'message': 'Usuário já cadastrado'}), 400
