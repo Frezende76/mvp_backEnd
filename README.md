@@ -74,7 +74,7 @@ pip freeze > requirements.txt
 ## 📌 5. Iniciando o Servidor
 
 ```bash
-python app.py
+python app.py ou Flask run
 ```
 
 O servidor estará rodando em:  
@@ -118,13 +118,10 @@ http://127.0.0.1:5000/usuarios/
 
 ## 📌 8. Documentação Swagger
 
-A API possui documentação interativa com **Swagger**, acessível em:
 
-[http://127.0.0.1:5000/swagger.json](http://127.0.0.1:5000/swagger.json)
+Acesse o **Swagger-UI** no navegador:
 
-Se você adicionou **Flask-Swagger-UI**, acesse:
-
-[http://127.0.0.1:5000/docs](http://127.0.0.1:5000/docs)
+[http://127.0.0.1:5000/swagger]
 
 ---
 
